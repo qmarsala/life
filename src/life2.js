@@ -117,8 +117,7 @@ function life() {
     let generation = 0;
     let population = 0;
     let stableCounter = 0;
-    window.addEventListener('resize', () => { draw(universe) }, false);
-
+    let tickRate =  document.getElementById('tickRateInput').value;
     document.getElementById('population-wrapper').style.backgroundColor = '#fff';
     draw(universe);
 
@@ -138,5 +137,5 @@ function life() {
         population = newPopulation;
         document.getElementById('population').innerHTML = population;
         document.getElementById('generation').innerHTML = generation;
-    }, 150);
+    }, tickRate);
 }
