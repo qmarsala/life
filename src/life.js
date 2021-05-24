@@ -1,6 +1,8 @@
 const initCell = { isOld: false, isAlive: false, age: 0 };
 const universe = [];
 let generations = 0;
+let lifeInterval;
+let status = '';
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -17,7 +19,7 @@ function init() {
     }
     let i = 0;
     while (i < 75) {
-        universe[getRandomInt(0,50)][getRandomInt(0,50)] = { isOld: false, isAlive: true };
+        universe[getRandomInt(0, 50)][getRandomInt(0, 50)] = { isOld: false, isAlive: true };
         i++;
     }
     draw();
@@ -48,8 +50,8 @@ function draw() {
             for (let j = 0; j < universe.length; j++) {
                 const cell = universe[i][j];
                 if (!cell.isAlive) continue;
-                let x = j * 6; // x coordinate
-                let y = i * 6; // y coordinate
+                let x = j * 6;
+                let y = i * 6;
                 ctx.fillStyle = 'rgb(200, 200, 200)';
                 if (cell.age > 10) {
                     ctx.fillStyle = 'rgb(255, 165, 0)';
@@ -64,40 +66,43 @@ function draw() {
 }
 
 function life() {
-    let lifeInterval = setInterval(() => {
-        for (let x = 0; x < universe.length; x++) {
-            for (let y = 0; y < universe.length; y++) {
-                let currentCell = universe[x][y];
-                let neighbors = getNeighbors(x, y);
-                let liveNeighbors = neighbors.filter(c => c.isAlive).length;
-                if (currentCell.isOld) {
-                    universe[x][y].isAlive = false;
-                }
+    clearInterval(lifeInterval);
 
-                if (currentCell.isAlive) {
-                    if (liveNeighbors < 2 || liveNeighbors > 3) {
+    init();
+
+    lifeInterval =
+        setInterval(() => {
+            for (let x = 0; x < universe.length; x++) {
+                for (let y = 0; y < universe.length; y++) {
+                    let currentCell = universe[x][y];
+                    let neighbors = getNeighbors(x, y);
+                    let liveNeighbors = neighbors.filter(c => c.isAlive).length;
+                    if (currentCell.isOld) {
                         universe[x][y].isAlive = false;
                     }
-                } else if (liveNeighbors === 3) {
-                    universe[x][y].isAlive = true;
-                    universe[x][y].isOld = false;
-                    universe[x][y].age = 0;
-                } else {
-                    universe[x][y].isOld = true;
-                }
-                universe[x][y].age++;
-            }
-        }
-        generations++;
-        draw();
 
-        if (universe.flat().every(c => !c.isAlive)) {
-            clearInterval(lifeInterval);
-            alert(`universe died after ${generations} generations.  refresh to start over.`);
-        }
-        console.log('tick');
-    }, 100);
+                    if (currentCell.isAlive) {
+                        if (liveNeighbors < 2 || liveNeighbors > 3) {
+                            universe[x][y].isAlive = false;
+                        }
+                    } else if (liveNeighbors === 3) {
+                        universe[x][y].isAlive = true;
+                        universe[x][y].isOld = false;
+                        universe[x][y].age = 0;
+                    } else {
+                        universe[x][y].isOld = true;
+                    }
+                    universe[x][y].age++;
+                }
+            }
+            generations++;
+            draw();
+
+            if (universe.flat().every(c => !c.isAlive)) {
+                clearInterval(lifeInterval);
+            }
+            console.log('tick');
+        }, 100);
 }
 
-init();
 life();
