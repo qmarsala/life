@@ -20,6 +20,8 @@ function getNeighbors(universe, i, j) {
 }
 
 function init() {
+    document.getElementById('population').innerHTML = '0';
+    document.getElementById('generation').innerHTML = '0';
     area = document.getElementById('areaInput').value;
     count = document.getElementById('countInput').value;
     if (area > 200) area = 200;
@@ -32,13 +34,6 @@ function init() {
             universe[x][y] = false;
         }
     }
-    //todo: seed
-    // universe[12][10] = true;
-    // universe[11][10] = true;
-    // universe[10][10] = true;
-    // universe[12][9] = true;
-    // universe[11][8] = true;
-
     let i = 0;
     while (i < count) {
         universe[getRandomInt(0, area)][getRandomInt(0, area)] = { isOld: false, isAlive: true };
@@ -79,7 +74,16 @@ function nextGeneration(currentUniverse) {
 }
 
 function draw(universe) {
+    let bgColor = document.getElementById('bgColorInput').value;
+    let color = document.getElementById('colorInput').value;
     let canvas = document.getElementById('canvas');
+    if (!color || color[0] != '#') { 
+        color = "#2A9D8F"
+    }
+    if (!bgColor || bgColor[0] != '#') { 
+        bgColor = "#264653"
+    }
+    canvas.style.backgroundColor = bgColor;
     if (canvas.getContext) {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.height, canvas.width);
@@ -91,13 +95,7 @@ function draw(universe) {
 
                 let x = j * 6;
                 let y = i * 6;
-                ctx.fillStyle = 'rgb(200, 200, 200)';
-                if (cell.age > 10) {
-                    ctx.fillStyle = 'rgb(255, 165, 0)';
-                }
-                if (cell.age > 100) {
-                    ctx.fillStyle = 'rgb(255, 0, 0)';
-                }
+                ctx.fillStyle = color;
                 ctx.fillRect(x, y, 5, 5);
             }
         }
@@ -108,11 +106,16 @@ let mainLifeInterval = null;
 function life() {
     if (mainLifeInterval) { clearInterval(mainLifeInterval); }
     let universe = init();
+    let generation = 0;
     draw(universe);
 
     mainLifeInterval = setInterval(() => {
         let nextUniverse = nextGeneration(universe);
         draw(nextUniverse);
+
         universe = nextUniverse;
+        generation++;
+        document.getElementById('population').innerHTML = universe.flat().filter(x => x).length;
+        document.getElementById('generation').innerHTML = generation;
     }, 150);
 }

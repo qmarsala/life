@@ -10,11 +10,22 @@
 </head>
 
 <body>
-  <button onclick='life()'>reset</button>
-  area: <input id='areaInput' type="number" value="50">
-  count: <input id='countInput' type="number" value="400">
+
+  <div>
+    <button onclick='life()'>reset</button>
+    area: <input id='areaInput' style="width: 75px;" type="number" value="50">
+    count: <input id='countInput' style="width: 75px;" type="number" value="400">
+  </div>
+  <div>
+    bg-color <input id='bgColorInput' style="width: 75px;" type="string" value="#264653">
+    color: <input id='colorInput' style="width: 75px;" type="string" value="#2A9D8F">
+  </div>
+  <div>
+    population: <span id='population'></span>
+    generation: <span id='generation'></span>
+  </div>
   <hr />
-  <canvas id='canvas' height="1000px" width="1000px" style="border: 1px solid grey;"></canvas>
+  <canvas id='canvas' height="1000px" width="1000px"></canvas>
   <script src="./life2.js"></script>
 </body>
 
