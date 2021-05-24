@@ -77,10 +77,10 @@ function draw(universe) {
     let bgColor = document.getElementById('bgColorInput').value;
     let color = document.getElementById('colorInput').value;
     let canvas = document.getElementById('canvas');
-    if (!color || color[0] != '#') { 
+    if (!color || color[0] != '#') {
         color = "#2A9D8F"
     }
-    if (!bgColor || bgColor[0] != '#') { 
+    if (!bgColor || bgColor[0] != '#') {
         bgColor = "#264653"
     }
     canvas.style.backgroundColor = bgColor;
@@ -107,6 +107,9 @@ function life() {
     if (mainLifeInterval) { clearInterval(mainLifeInterval); }
     let universe = init();
     let generation = 0;
+    let population = 0;
+    let stableCounter = 0;
+    document.getElementById('population-wrapper').style.backgroundColor = '#fff';
     draw(universe);
 
     mainLifeInterval = setInterval(() => {
@@ -115,7 +118,15 @@ function life() {
 
         universe = nextUniverse;
         generation++;
-        document.getElementById('population').innerHTML = universe.flat().filter(x => x).length;
+        let newPopulation = universe.flat().filter(x => x).length;
+        if (newPopulation === population) {
+            stableCounter++;
+            if (stableCounter > 50) { 
+                document.getElementById('population-wrapper').style.backgroundColor = '#70E000';
+            }
+        }
+        population = newPopulation;
+        document.getElementById('population').innerHTML = population;
         document.getElementById('generation').innerHTML = generation;
     }, 150);
 }
