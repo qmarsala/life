@@ -1,4 +1,8 @@
-const universe = [];
+const initCell = { isOld: false, isAlive: false };
+const universe = new Array(1000)
+    .fill(initCell)
+    .map(() => new Array(1000)
+        .fill(initCell));
 let generations = 0;
 
 function getRandomInt(min, max) {
@@ -19,19 +23,13 @@ function generateCluster(tX, tY) {
 }
 
 function init() {
-    for (let x = 0; x < 100; x++) {
-        universe[x] = new Array();
-        for (let y = 0; y < 100; y++) {
-            universe[x][y] = { isOld: false, isAlive: false };
-        }
-    }
-
     let i = 0;
     while (i <= 2) {
-        generateCluster(0,0);
-        generateCluster(50,50);
+        generateCluster(0, 0);
+        generateCluster(50, 50);
         i++;
     }
+    draw();
 }
 
 function getNeighbors(myArray, i, j) {
@@ -47,32 +45,6 @@ function getNeighbors(myArray, i, j) {
         }
     }
     return neighbors;
-}
-
-function life() {
-    for (let x = 0; x < universe.length; x++) {
-        for (let y = 0; y < universe.length; y++) {
-            let currentCell = universe[x][y];
-            let neighbors = getNeighbors(universe, x, y);
-            let liveNeighbors = neighbors.filter(c => c.isAlive).length;
-            if (currentCell.isOld) {
-                universe[x][y].isAlive = false;
-            }
-
-            if (currentCell.isAlive) {
-                if (liveNeighbors < 2 || liveNeighbors > 3) {
-                    universe[x][y].isAlive = false;
-                }
-            } else if (liveNeighbors === 3) {
-                universe[x][y].isAlive = true;
-                universe[x][y].isOld = false;
-            } else {
-                universe[x][y].isOld = true;
-            }
-        }
-    }
-    generations++;
-    draw();
 }
 
 function draw() {
@@ -94,6 +66,38 @@ function draw() {
     }
 }
 
+function life() {
+    let lifeInterval = setInterval(() => {
+        for (let x = 0; x < universe.length; x++) {
+            for (let y = 0; y < universe.length; y++) {
+                let currentCell = universe[x][y];
+                let neighbors = getNeighbors(universe, x, y);
+                let liveNeighbors = neighbors.filter(c => c.isAlive).length;
+                if (currentCell.isOld) {
+                    universe[x][y].isAlive = false;
+                }
+
+                if (currentCell.isAlive && liveNeighbors === 2 || liveNeighbors === 3) {
+                    universe[x][y].isAlive = true;
+                } else if (currentCell.isAlive && liveNeighbors < 2 || liveNeighbors > 3) {
+                    universe[x][y].isAlive = false;
+                }
+                else if (liveNeighbors === 3) {
+                    universe[x][y].isAlive = true;
+                    universe[x][y].isOld = false;
+                } else {
+                    universe[x][y].isOld = true;
+                }
+            }
+        }
+        generations++;
+        draw();
+        if (universe.flat().every(c => !c.isAlive)) {
+            clearInterval(lifeInterval);
+            alert(`universe died after ${generations} generations.  refresh to start over.`);
+        }
+    }, 100);
+}
+
 init();
-draw();
-setInterval(life, 100);
+life();
