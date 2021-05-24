@@ -7,13 +7,13 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-function generateCluster(transform) {
+function generateCluster(tX, tY) {
     let clusterSize = getRandomInt(1, 7);
     if (clusterSize < 2) clusterSize = 2;
     while (clusterSize > 1) {
         let x = getRandomInt(0, clusterSize);
         let y = getRandomInt(0, clusterSize);
-        universe[x + transform.x][y + transform.y] = { isOld: false, isAlive: true };
+        universe[x + tX][y + tY] = { isOld: false, isAlive: true };
         clusterSize--;
     }
 }
@@ -27,17 +27,9 @@ function init() {
     }
 
     let i = 0;
-    let transforms = [
-        { x: 0, y: 0 },
-        { x: getRandomInt(10, 20), y: getRandomInt(10, 20) },
-        { x: getRandomInt(10, 40), y: getRandomInt(10, 40) },
-        { x: getRandomInt(10, 60), y: getRandomInt(10, 60) },
-        { x: getRandomInt(10, 70), y: getRandomInt(10, 70) },
-    ];
-    while (i <= 20) {
-        for (let t = 0; t < transforms.length; t++) {
-            generateCluster(transforms[t]);
-        }
+    while (i <= 2) {
+        generateCluster(0,0);
+        generateCluster(50,50);
         i++;
     }
 }
@@ -68,16 +60,14 @@ function life() {
             }
 
             if (currentCell.isAlive) {
-                if (liveNeighbors === 2 || liveNeighbors === 3) {
-                    universe[x][y].isOld = true;
-                } else {
+                if (liveNeighbors < 2 || liveNeighbors > 3) {
                     universe[x][y].isAlive = false;
                 }
+            } else if (liveNeighbors === 3) {
+                universe[x][y].isAlive = true;
+                universe[x][y].isOld = false;
             } else {
-                if (liveNeighbors === 3) {
-                    universe[x][y].isAlive = true;
-                    universe[x][y].isOld = false;
-                }
+                universe[x][y].isOld = true;
             }
         }
     }
@@ -95,10 +85,10 @@ function draw() {
             for (let j = 0; j < universe.length; j++) {
                 const cell = universe[i][j];
                 if (!cell.isAlive) continue;
-                let x = 10 + j * 11; // x coordinate
-                let y = 10 + i * 11; // y coordinate
+                let x = j * 6; // x coordinate
+                let y = i * 6; // y coordinate
                 ctx.fillStyle = 'rgb(200, 200, 200)';
-                ctx.fillRect(x, y, 10, 10);
+                ctx.fillRect(x, y, 5, 5);
             }
         }
     }
