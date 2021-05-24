@@ -1,7 +1,7 @@
 const initCell = { isOld: false, isAlive: false };
-const universe = new Array(1000)
+const universe = new Array(200)
     .fill(initCell)
-    .map(() => new Array(1000)
+    .map(() => new Array(200)
         .fill(initCell));
 let generations = 0;
 
@@ -11,36 +11,38 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-function generateCluster(tX, tY) {
-    let clusterSize = getRandomInt(1, 13);
-    if (clusterSize < 2) clusterSize = 2;
-    while (clusterSize > 1) {
-        let x = getRandomInt(0, clusterSize);
-        let y = getRandomInt(0, clusterSize);
-        universe[x + tX][y + tY] = { isOld: false, isAlive: true };
-        clusterSize--;
+function generateCluster(startX, startY) {
+    let x = startX;
+    let y = startY;
+    let clusterSize = 0;
+    while (clusterSize < 45) {
+        universe[x][y] = { isOld: false, isAlive: true };
+        x = getRandomInt(x - 2, x + 2);
+        y = getRandomInt(y - 2, y + 2);
+        if (x < 0 || x > universe.length){
+            x = startX;
+        }
+        if (y < 0 || y > universe.length){
+            y = startY;
+        }
+        clusterSize++;
     }
 }
 
 function init() {
-    generateCluster(0, 0);
-    generateCluster(0, 50);
-    generateCluster(50, 0);
-    generateCluster(50, 50);
-    generateCluster(50, 100);
-    generateCluster(100, 50);
+    generateCluster(getRandomInt(25, 50), getRandomInt(25, 50));
     draw();
 }
 
-function getNeighbors(myArray, i, j) {
-    let rowLimit = myArray.length - 1;
-    let columnLimit = myArray[0].length - 1;
+function getNeighbors(i, j) {
+    let rowLimit = universe.length - 1;
+    let columnLimit = universe[0].length - 1;
     let neighbors = [];
 
     for (let x = Math.max(0, i - 1); x <= Math.min(i + 1, rowLimit); x++) {
         for (let y = Math.max(0, j - 1); y <= Math.min(j + 1, columnLimit); y++) {
             if (x !== i || y !== j) {
-                neighbors.push(myArray[x][y]);
+                neighbors.push(universe[x][y]);
             }
         }
     }
@@ -67,11 +69,14 @@ function draw() {
 }
 
 function life() {
+    let stableState = "";
+    let repeat = 0;
+    let repeatLimit = 25;
     let lifeInterval = setInterval(() => {
         for (let x = 0; x < universe.length; x++) {
             for (let y = 0; y < universe.length; y++) {
                 let currentCell = universe[x][y];
-                let neighbors = getNeighbors(universe, x, y);
+                let neighbors = getNeighbors(x, y);
                 let liveNeighbors = neighbors.filter(c => c.isAlive).length;
                 if (currentCell.isOld) {
                     universe[x][y].isAlive = false;
@@ -92,11 +97,24 @@ function life() {
         }
         generations++;
         draw();
+
         if (universe.flat().every(c => !c.isAlive)) {
             clearInterval(lifeInterval);
             alert(`universe died after ${generations} generations.  refresh to start over.`);
         }
-    }, 100);
+
+        let newState = universe.flatMap(c => c.isAlive).join();
+        if (stableState === newState) {
+            repeat++;
+            if (repeat > repeatLimit) {
+                clearInterval(lifeInterval);
+                alert(`universe has become stable after ${generations} generations.  refresh to start over.`);
+            }
+        } else {
+            stableState = newState;
+        }
+        console.log('tick');
+    }, 250);
 }
 
 init();
