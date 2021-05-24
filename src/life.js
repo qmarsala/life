@@ -1,8 +1,5 @@
-const initCell = { isOld: false, isAlive: false };
-const universe = new Array(200)
-    .fill(initCell)
-    .map(() => new Array(200)
-        .fill(initCell));
+const initCell = { isOld: false, isAlive: false, age: 0 };
+const universe = [];
 let generations = 0;
 
 function getRandomInt(min, max) {
@@ -11,26 +8,18 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-function generateCluster(startX, startY) {
-    let x = startX;
-    let y = startY;
-    let clusterSize = 0;
-    while (clusterSize < 45) {
-        universe[x][y] = { isOld: false, isAlive: true };
-        x = getRandomInt(x - 2, x + 2);
-        y = getRandomInt(y - 2, y + 2);
-        if (x < 0 || x > universe.length){
-            x = startX;
-        }
-        if (y < 0 || y > universe.length){
-            y = startY;
-        }
-        clusterSize++;
-    }
-}
-
 function init() {
-    generateCluster(getRandomInt(25, 50), getRandomInt(25, 50));
+    for (let x = 0; x < 200; x++) {
+        universe[x] = new Array();
+        for (let y = 0; y < 200; y++) {
+            universe[x][y] = { isOld: false, isAlive: false };
+        }
+    }
+    let i = 0;
+    while (i < 75) {
+        universe[getRandomInt(0,50)][getRandomInt(0,50)] = { isOld: false, isAlive: true };
+        i++;
+    }
     draw();
 }
 
@@ -62,6 +51,12 @@ function draw() {
                 let x = j * 6; // x coordinate
                 let y = i * 6; // y coordinate
                 ctx.fillStyle = 'rgb(200, 200, 200)';
+                if (cell.age > 10) {
+                    ctx.fillStyle = 'rgb(255, 165, 0)';
+                }
+                if (cell.age > 100) {
+                    ctx.fillStyle = 'rgb(255, 0, 0)';
+                }
                 ctx.fillRect(x, y, 5, 5);
             }
         }
@@ -69,9 +64,6 @@ function draw() {
 }
 
 function life() {
-    let stableState = "";
-    let repeat = 0;
-    let repeatLimit = 25;
     let lifeInterval = setInterval(() => {
         for (let x = 0; x < universe.length; x++) {
             for (let y = 0; y < universe.length; y++) {
@@ -82,17 +74,18 @@ function life() {
                     universe[x][y].isAlive = false;
                 }
 
-                if (currentCell.isAlive && liveNeighbors === 2 || liveNeighbors === 3) {
-                    universe[x][y].isAlive = true;
-                } else if (currentCell.isAlive && liveNeighbors < 2 || liveNeighbors > 3) {
-                    universe[x][y].isAlive = false;
-                }
-                else if (liveNeighbors === 3) {
+                if (currentCell.isAlive) {
+                    if (liveNeighbors < 2 || liveNeighbors > 3) {
+                        universe[x][y].isAlive = false;
+                    }
+                } else if (liveNeighbors === 3) {
                     universe[x][y].isAlive = true;
                     universe[x][y].isOld = false;
+                    universe[x][y].age = 0;
                 } else {
                     universe[x][y].isOld = true;
                 }
+                universe[x][y].age++;
             }
         }
         generations++;
@@ -102,19 +95,8 @@ function life() {
             clearInterval(lifeInterval);
             alert(`universe died after ${generations} generations.  refresh to start over.`);
         }
-
-        let newState = universe.flatMap(c => c.isAlive).join();
-        if (stableState === newState) {
-            repeat++;
-            if (repeat > repeatLimit) {
-                clearInterval(lifeInterval);
-                alert(`universe has become stable after ${generations} generations.  refresh to start over.`);
-            }
-        } else {
-            stableState = newState;
-        }
         console.log('tick');
-    }, 250);
+    }, 100);
 }
 
 init();
