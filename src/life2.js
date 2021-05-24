@@ -24,19 +24,23 @@ function init() {
     document.getElementById('generation').innerHTML = '0';
     area = document.getElementById('areaInput').value;
     count = document.getElementById('countInput').value;
-    if (area > 200) area = 200;
+    let rows, cols = 200
+    if (area > rows) area = rows;
     if (count < 10) count = 10;
 
     let universe = [];
-    for (let x = 0; x < 200; x++) {
+    for (let x = 0; x < rows; x++) {
         universe[x] = new Array();
-        for (let y = 0; y < 200; y++) {
+        for (let y = 0; y < cols; y++) {
             universe[x][y] = false;
         }
     }
     let i = 0;
+    let startingPositionTranslation = 15;
     while (i < count) {
-        universe[getRandomInt(0, area)][getRandomInt(0, area)] = { isOld: false, isAlive: true };
+        universe
+        [getRandomInt(0, area) + startingPositionTranslation]
+        [getRandomInt(0, area) + startingPositionTranslation] = false;
         i++;
     }
     return universe;
@@ -83,20 +87,25 @@ function draw(universe) {
     if (!bgColor || bgColor[0] != '#') {
         bgColor = "#264653"
     }
+    canvas.width = window.innerWidth - 20;
+    canvas.height = window.innerHeight - 100;
     canvas.style.backgroundColor = bgColor;
     if (canvas.getContext) {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.height, canvas.width);
+        let padding = 50;
+        let size = 5;
+        let margin = 1;
 
         for (let i = 0; i < universe.length; i++) {
             for (let j = 0; j < universe.length; j++) {
                 const cell = universe[i][j];
                 if (!cell) continue;
 
-                let x = j * 6;
-                let y = i * 6;
+                let x = (j * (size + margin)) - padding;
+                let y = (i * (size + margin)) - padding;
                 ctx.fillStyle = color;
-                ctx.fillRect(x, y, 5, 5);
+                ctx.fillRect(x, y, size, size);
             }
         }
     }
@@ -109,6 +118,8 @@ function life() {
     let generation = 0;
     let population = 0;
     let stableCounter = 0;
+    window.addEventListener('resize', () => { draw(universe) }, false);
+
     document.getElementById('population-wrapper').style.backgroundColor = '#fff';
     draw(universe);
 
@@ -121,7 +132,7 @@ function life() {
         let newPopulation = universe.flat().filter(x => x).length;
         if (newPopulation === population) {
             stableCounter++;
-            if (stableCounter > 50) { 
+            if (stableCounter > 50) {
                 document.getElementById('population-wrapper').style.backgroundColor = '#70E000';
             }
         }
