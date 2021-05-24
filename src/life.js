@@ -12,7 +12,7 @@ function getRandomInt(min, max) {
 }
 
 function generateCluster(tX, tY) {
-    let clusterSize = getRandomInt(1, 7);
+    let clusterSize = getRandomInt(1, 13);
     if (clusterSize < 2) clusterSize = 2;
     while (clusterSize > 1) {
         let x = getRandomInt(0, clusterSize);
@@ -23,12 +23,12 @@ function generateCluster(tX, tY) {
 }
 
 function init() {
-    let i = 0;
-    while (i <= 2) {
-        generateCluster(0, 0);
-        generateCluster(50, 50);
-        i++;
-    }
+    generateCluster(0, 0);
+    generateCluster(0, 50);
+    generateCluster(50, 0);
+    generateCluster(50, 50);
+    generateCluster(50, 100);
+    generateCluster(100, 50);
     draw();
 }
 
