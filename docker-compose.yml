@@ -1,8 +1,9 @@
-version: '3.0'
+version: "3"
 
 services:
-    nginx:
-      build: .
-      restart: always
-      ports:
-        - 27880:80
+    client:
+        image: nginx
+        ports:
+            - 27880:80
+        volumes:
+            - ./src:/usr/share/nginx/html
