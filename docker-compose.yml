@@ -1,0 +1,8 @@
+version: '3.0'
+
+services:
+    nginx:
+      build: .
+      restart: always
+      ports:
+        - 27880:80
