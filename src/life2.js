@@ -24,7 +24,8 @@ function init() {
     document.getElementById('generation').innerHTML = '0';
     area = document.getElementById('areaInput').value;
     count = document.getElementById('countInput').value;
-    let rows, cols = 200
+    let rows = 200;
+    let cols = 200;
     if (area > rows) area = rows;
     if (count < 10) count = 10;
 
@@ -36,11 +37,9 @@ function init() {
         }
     }
     let i = 0;
-    let startingPositionTranslation = 15;
+    let startingTranslation = 15;
     while (i < count) {
-        universe
-        [getRandomInt(0, area) + startingPositionTranslation]
-        [getRandomInt(0, area) + startingPositionTranslation] = false;
+        universe[getRandomInt(0, area) + startingTranslation][getRandomInt(0, area) + startingTranslation] = true;
         i++;
     }
     return universe;
