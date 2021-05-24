@@ -86,7 +86,7 @@ function draw(universe) {
     if (!bgColor || bgColor[0] != '#') {
         bgColor = "#264653"
     }
-    canvas.width = window.innerWidth - 20;
+    canvas.width = window.innerWidth;
     canvas.height = window.innerHeight - 100;
     canvas.style.backgroundColor = bgColor;
     if (canvas.getContext) {

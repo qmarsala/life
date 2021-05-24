@@ -21,37 +21,41 @@
 </head>
 
 <body>
-  <div class="ml-3 row">
-    <div>
-      <button class="btn btn-outline-dark" onclick='life()'>reset</button>
-    </div>
-    <div>
-      <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#settings"
-        aria-expanded="false" aria-controls="settings">
-        settings
-      </button>
-    </div>
-    <div class="collapse" id="settings">
-      <div class="card card-body">
-        <div>
-          area: <input id='areaInput' type="number" value="50">
-          count: <input id='countInput' type="number" value="400">
-        </div>
-        <div>
-          bg-color <input id='bgColorInput' type="string" value="#264653">
-          color: <input id='colorInput' type="string" value="#2A9D8F">
+  <div class="container-fluid">
+    <div class="ml-3 row">
+      <div>
+        <button class="btn btn-outline-dark" onclick='life()'>reset</button>
+      </div>
+      <div>
+        <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#settings"
+          aria-expanded="false" aria-controls="settings">
+          settings
+        </button>
+      </div>
+      <div class="collapse" id="settings">
+        <div class="card card-body">
+          <div>
+            area: <input id='areaInput' type="number" value="50">
+            count: <input id='countInput' type="number" value="400">
+          </div>
+          <div>
+            bg-color <input id='bgColorInput' type="string" value="#264653">
+            color: <input id='colorInput' type="string" value="#2A9D8F">
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="ml-3">
+      <span id='population-wrapper'>population: <span id='population'></span></span>
+      generation: <span id='generation'></span>
+    </div>
+
+    <hr />
+
+    <canvas id='canvas'></canvas>
   </div>
 
-  <div class="ml-3">
-    <span id='population-wrapper'>population: <span id='population'></span></span>
-    generation: <span id='generation'></span>
-  </div>
-
-  <hr />
-  <canvas id='canvas'></canvas>
   <script src="./life2.js"></script>
 </body>
 
