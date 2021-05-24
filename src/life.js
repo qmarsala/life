@@ -3,6 +3,8 @@ const universe = [];
 let generations = 0;
 let lifeInterval;
 let status = '';
+let area = 50;
+let count = 75;
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -11,6 +13,11 @@ function getRandomInt(min, max) {
 }
 
 function init() {
+    area = document.getElementById('areaInput').value;
+    count = document.getElementById('countInput').value;
+    if (area > 200) area = 200;
+    if (count < 10) count = 10;
+
     for (let x = 0; x < 200; x++) {
         universe[x] = new Array();
         for (let y = 0; y < 200; y++) {
@@ -18,8 +25,8 @@ function init() {
         }
     }
     let i = 0;
-    while (i < 75) {
-        universe[getRandomInt(0, 50)][getRandomInt(0, 50)] = { isOld: false, isAlive: true };
+    while (i < count) {
+        universe[getRandomInt(0, area)][getRandomInt(0, area)] = { isOld: false, isAlive: true };
         i++;
     }
     draw();
@@ -99,7 +106,7 @@ function life() {
             draw();
 
             if (universe.flat().every(c => !c.isAlive)) {
-                clearInterval(lifeInterval);
+                init();
             }
             console.log('tick');
         }, 100);
