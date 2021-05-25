@@ -63,6 +63,7 @@
     .flexEnd {
       justify-content: flex-end;
     }
+
     /* #endregion */
   </style>
 </head>
@@ -84,9 +85,6 @@
           <input id='startingTranslationInput' type="number" value="15">
         </div>
       </div>
-      <div>
-        <button onclick='life()'>reset</button>
-      </div>
     </div>
     <div class="flexRow">
       <div class="flexColumn mr2">
@@ -102,7 +100,9 @@
         <input id='tickRateInput' type="number" value="150">
       </div>
     </div>
-
+    <div class="flexRow">
+      <button onclick='life()'>reset</button>
+    </div>
     <div class="wrapper">
       <div id='population-wrapper' class="mr4">
         Population: <span id='population'></span>
