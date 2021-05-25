@@ -7,26 +7,109 @@
   <title></title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    body {
+      margin: 0;
+    }
+
+    label {
+      display: block;
+    }
+
+    .mr2 {
+      margin-right: .75em;
+    }
+
+    .mr4 {
+      margin-right: 1.25em;
+    }
+
+    .container {
+      display: flex;
+      flex-flow: column nowrap;
+      max-width: 560px;
+      padding: .3em .4em;
+      margin: auto;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: row;
+      margin: auto;
+    }
+
+    /* #region Flex Style */
+
+    .dFlex {
+      display: flex;
+    }
+
+    .flexRow {
+      display: flex;
+      width: 100%;
+      margin-bottom: 1em;
+      align-items: center;
+    }
+
+    .flexColumn {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .spaceBetween {
+      justify-content: space-between;
+    }
+
+    .flexEnd {
+      justify-content: flex-end;
+    }
+    /* #endregion */
+  </style>
 </head>
 
 <body>
-  <div>
-    <button onclick='life()'>reset</button>
+  <div class="container">
+    <div class="flexRow spaceBetween">
+      <div class="dFlex">
+        <div class="flexColumn mr2">
+          <label for="areaInput">Area</label>
+          <input id='areaInput' type="number" value="10">
+        </div>
+        <div class="flexColumn mr2">
+          <label for="countInput">Count</label>
+          <input id='countInput' type="number" value="1000">
+        </div>
+        <div class="flexColumn mr2">
+          <label for="startingTranslationInput">Starting Translation</label>
+          <input id='startingTranslationInput' type="number" value="15">
+        </div>
+      </div>
+      <div>
+        <button onclick='life()'>reset</button>
+      </div>
+    </div>
+    <div class="flexRow">
+      <div class="flexColumn mr2">
+        <label for="bgColorInput">Bg-color</label>
+        <input id='bgColorInput' type="string" value="#264653">
+      </div>
+      <div class="flexColumn mr2">
+        <label for="colorInput">Color</label>
+        <input id='colorInput' type="string" value="#2A9D8F">
+      </div>
+      <div class="flexColumn mr2">
+        <label for="tickRateInput">Tick-rate</label>
+        <input id='tickRateInput' type="number" value="150">
+      </div>
+    </div>
+
+    <div class="wrapper">
+      <div id='population-wrapper' class="mr4">
+        Population: <span id='population'></span>
+      </div>
+      Generation: <span id='generation'></span>
+    </div>
   </div>
-  <div>
-    area: <input id='areaInput' type="number" value="50" min="10" max="150">
-    count: <input id='countInput' type="number" value="400" min="10" max="5000">
-  </div>
-  <div>
-    bg-color <input id='bgColorInput' type="string" value="#264653" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
-    color: <input id='colorInput' type="string" value="#2A9D8F" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
-    tick-rate: <input id='tickRateInput' type="number" value="150">
-  </div>
-  <div>
-    <span id='population-wrapper'>population: <span id='population'></span></span>
-    generation: <span id='generation'></span>
-  </div>
-  <hr />
 
   <canvas id='canvas'></canvas>
 

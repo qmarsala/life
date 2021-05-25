@@ -20,13 +20,13 @@ function getNeighbors(universe, i, j) {
 }
 
 function init() {
-    area = document.getElementById('areaInput').value;
-    count = document.getElementById('countInput').value;
-    let startingTranslation = 15;
+    let area = parseInt(document.getElementById('areaInput').value);
+    let count = parseInt(document.getElementById('countInput').value);
+    let startingTranslation = parseInt(document.getElementById('startingTranslationInput').value);
     let rows = 200;
     let cols = 200;
     if (area > rows - startingTranslation) area = rows - startingTranslation;
-    if (count < 10) count = 10;
+    if (count < 2) count = 2;
 
     let universe = [];
     for (let x = 0; x < rows; x++) {
