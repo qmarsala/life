@@ -14,12 +14,12 @@
     <button onclick='life()'>reset</button>
   </div>
   <div>
-    area: <input id='areaInput' type="number" value="50">
-    count: <input id='countInput' type="number" value="400">
+    area: <input id='areaInput' type="number" value="50" min="10" max="150">
+    count: <input id='countInput' type="number" value="400" min="10" max="5000">
   </div>
   <div>
-    bg-color <input id='bgColorInput' type="string" value="#264653">
-    color: <input id='colorInput' type="string" value="#2A9D8F">
+    bg-color <input id='bgColorInput' type="string" value="#264653" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
+    color: <input id='colorInput' type="string" value="#2A9D8F" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
     tick-rate: <input id='tickRateInput' type="number" value="150">
   </div>
   <div>

@@ -1,7 +1,7 @@
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+    return Math.floor(Math.random() * (max - min) + min);
 }
 
 function getNeighbors(universe, i, j) {
@@ -20,13 +20,12 @@ function getNeighbors(universe, i, j) {
 }
 
 function init() {
-    document.getElementById('population').innerHTML = '0';
-    document.getElementById('generation').innerHTML = '0';
     area = document.getElementById('areaInput').value;
     count = document.getElementById('countInput').value;
+    let startingTranslation = 15;
     let rows = 200;
     let cols = 200;
-    if (area > rows) area = rows;
+    if (area > rows - startingTranslation) area = rows - startingTranslation;
     if (count < 10) count = 10;
 
     let universe = [];
@@ -37,7 +36,6 @@ function init() {
         }
     }
     let i = 0;
-    let startingTranslation = 15;
     while (i < count) {
         universe[getRandomInt(0, area) + startingTranslation][getRandomInt(0, area) + startingTranslation] = true;
         i++;
@@ -55,21 +53,20 @@ function nextGeneration(currentUniverse) {
         nextUniverse[x] = new Array();
         for (let y = 0; y < currentUniverse.length; y++) {
             let neighbours = getNeighbors(currentUniverse, x, y);
-            let neighbourAlive = neighbours.filter(c => c).length;
+            let neighboursAlive = neighbours.filter(c => c).length;
+            let cellIsAlive = currentUniverse[x][y];
 
-            if (currentUniverse[x][y] && neighbourAlive < 2 || neighbourAlive > 3) {
+            if (cellIsAlive && neighboursAlive < 2 || neighboursAlive > 3) {
                 nextUniverse[x][y] = false;
-                continue;
             }
-            if (currentUniverse[x][y] && neighbourAlive === 2 || neighbourAlive === 3) {
+            else if (cellIsAlive && neighboursAlive === 2 || neighboursAlive === 3) {
                 nextUniverse[x][y] = true;
-                continue;
             }
-            if (!currentUniverse[x][y] && neighbourAlive === 3) {
+            else if (!cellIsAlive && neighboursAlive === 3) {
                 nextUniverse[x][y] = true;
-                continue;
+            } else {
+                nextUniverse[x][y] = false;
             }
-            nextUniverse[x][y] = false;
         }
     }
 
@@ -80,12 +77,6 @@ function draw(universe) {
     let bgColor = document.getElementById('bgColorInput').value;
     let color = document.getElementById('colorInput').value;
     let canvas = document.getElementById('canvas');
-    if (!color || color[0] != '#') {
-        color = "#2A9D8F"
-    }
-    if (!bgColor || bgColor[0] != '#') {
-        bgColor = "#264653"
-    }
     canvas.width = window.innerWidth - 20;
     canvas.height = window.innerHeight - 100;
     canvas.style.backgroundColor = bgColor;
@@ -113,29 +104,39 @@ function draw(universe) {
 let mainLifeInterval = null;
 function life() {
     if (mainLifeInterval) { clearInterval(mainLifeInterval); }
-    let universe = init();
     let generation = 0;
     let population = 0;
     let stableCounter = 0;
-    let tickRate =  document.getElementById('tickRateInput').value;
+    let tickRate = document.getElementById('tickRateInput').value;
+    let universe = init();
     document.getElementById('population-wrapper').style.backgroundColor = '#fff';
     draw(universe);
 
-    mainLifeInterval = setInterval(() => {
+    let lifeTick = () => {
         let nextUniverse = nextGeneration(universe);
         draw(nextUniverse);
-
         universe = nextUniverse;
+    };
+
+    let updateStats = () => {
         generation++;
+        document.getElementById('generation').innerHTML = generation;
+
         let newPopulation = universe.flat().filter(x => x).length;
         if (newPopulation === population) {
             stableCounter++;
             if (stableCounter > 50) {
                 document.getElementById('population-wrapper').style.backgroundColor = '#70E000';
             }
+        } else {
+            stableCounter = 0;
         }
         population = newPopulation;
         document.getElementById('population').innerHTML = population;
-        document.getElementById('generation').innerHTML = generation;
+    };
+
+    mainLifeInterval = setInterval(() => {
+        lifeTick();
+        updateStats();
     }, tickRate);
 }
