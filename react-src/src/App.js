@@ -83,7 +83,11 @@ function App() {
   }, []);
 
   return (
-    <Canvas id="life-canvas" universe={universe}></Canvas>
+    <Canvas
+      id="life-canvas"
+      universe={universe}
+      lifeColor="#2A9D8F"
+      universeColor="#264653"></Canvas>
   );
 }
 

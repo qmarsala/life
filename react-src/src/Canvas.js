@@ -17,9 +17,10 @@ const resizeCanvas = (canvas) => {
 
 const Canvas = props => {
     const canvasRef = useRef(null)
+    const { universe, lifeColor, universeColor, ...rest } = props;
     const draw = (ctx, universe) => {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-
+        ctx.canvas.style.backgroundColor = universeColor;
         let padding = 50;
         let size = 5;
         let margin = 1;
@@ -30,7 +31,7 @@ const Canvas = props => {
 
                 let x = (j * (size + margin)) - padding;
                 let y = (i * (size + margin)) - padding;
-                //ctx.fillStyle = color;
+                ctx.fillStyle = lifeColor;
                 ctx.fillRect(x, y, size, size);
             }
         }
@@ -41,11 +42,10 @@ const Canvas = props => {
         const context = canvas.getContext('2d');
         resizeCanvas(canvas);
 
-        const universe = props.universe;
         draw(context, universe);
-    }, [props.universe])
+    }, [universe])
 
-    return <canvas ref={canvasRef} {...props} />
+    return <canvas ref={canvasRef} {...rest} />
 }
 
 export default Canvas
