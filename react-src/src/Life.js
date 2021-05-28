@@ -78,7 +78,7 @@ function Life(props) {
     useEffect(() => {
         let timer = setInterval(() => {
             dispatch({});
-        }, 100);
+        }, props.tickRate);
         setTimerID(timer);
         return () => clearInterval(timerID);
     }, []);
