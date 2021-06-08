@@ -4,6 +4,7 @@ import { init, nextGeneration, previousGeneration, getRandomInt } from './life.j
 
 CameraControls.install({ THREE: THREE });
 
+let cameraSettings = [-35, 120, -35, 25, 0, 25];
 let gridSize = 1000;
 let startingTranslation = gridSize * .25;
 let count = getRandomInt(100, 2500);
@@ -20,7 +21,7 @@ document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.01, 1000);
 const cameraControls = new CameraControls(camera, renderer.domElement);
-cameraControls.setLookAt(-35, 80, -35, 10, 0, 10);
+cameraControls.setLookAt(...cameraSettings);
 
 function clearThree(obj) {
     while (obj.children.length > 0) {
@@ -113,7 +114,7 @@ function restart() {
     if (currentTimeout != undefined) {
         clearTimeout(currentTimeout);
     }
-    cameraControls.setLookAt(-45, 60, -45, 0, 0, 0);
+    cameraControls.setLookAt(...cameraSettings);
     life();
     play();
     currentTimeout = life();
