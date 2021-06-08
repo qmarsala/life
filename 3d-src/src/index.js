@@ -17,7 +17,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.01, 1000);
-camera.position.set(0, 0, 15);
+camera.position.set(70, 70, -90);
 const cameraControls = new CameraControls(camera, renderer.domElement);
 
 const material = new THREE.MeshBasicMaterial({
@@ -55,8 +55,8 @@ function draw(universe) {
             if (!cell) continue;
 
             const cube = new THREE.Mesh(geometry, material);
-            cube.position.x = (i * (size + margin)) - 10;
-            cube.position.y = (j * (size + margin)) - 10;
+            cube.position.x = (i * (size + margin));
+            cube.position.y = (j * (size + margin));
             cube.position.z = 0;
             scene.add(cube);
         }
