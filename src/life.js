@@ -1,3 +1,5 @@
+let history = [];
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -42,6 +44,11 @@ function nextGeneration(currentUniverse) {
         return init();
     }
 
+    history.push(currentUniverse);
+    if (history.length > 5) {
+        history = history.slice(0, 4);
+    }
+
     let nextUniverse = [];
     for (let x = 0; x < currentUniverse.length; x++) {
         nextUniverse[x] = new Array();
@@ -67,4 +74,10 @@ function nextGeneration(currentUniverse) {
     return nextUniverse;
 }
 
-export {init, nextGeneration, getRandomInt};
+function previousGeneration() {
+    return history.length > 1 
+        ? history.pop()
+        : undefined;
+}
+
+export { init, nextGeneration, previousGeneration, getRandomInt };

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { init, nextGeneration, getRandomInt } from './life.js';
+import { init, nextGeneration, previousGeneration, getRandomInt } from './life.js';
 
 
 CameraControls.install({ THREE: THREE });
@@ -67,13 +67,22 @@ function draw(universe) {
     }
 }
 
+function tick() {
+    universe = nextGeneration(universe);
+    draw(universe);
+}
+
 let nextTickIn = tickRate;
+let paused = false;
 function life() {
+    universe = init(gridSize, count, startingArea, startingTranslation);
+    draw(universe);
     return setInterval(() => {
         let start = new Date();
 
-        universe = nextGeneration(universe);
-        draw(universe);
+        if (!paused) {
+            tick();
+        }
 
         const elapsed = new Date().getTime() - start.getTime();
         nextTickIn = tickRate - elapsed;
@@ -96,16 +105,72 @@ function restart() {
         clearInterval(lifeInterval);
     }
     cameraControls.setLookAt(-45, 60, -45, 0, 0, 0);
-    universe = init(gridSize, count, startingArea, startingTranslation);
-    draw(universe);
     lifeInterval = life();
+}
+
+function pause() {
+    paused = true;
+}
+
+function step() {
+    if (!paused) {
+        pause()
+    }
+
+    universe = nextGeneration(universe);
+    draw(universe);
+}
+
+function back() {
+    if (!paused) {
+        pause()
+    }
+
+    let prevUniverse = previousGeneration();
+    if (prevUniverse) { 
+        universe = prevUniverse;
+        draw(universe);
+    }
+}
+
+function play() {
+    paused = false;
+    if (lifeInterval == undefined) {
+        universe = init(gridSize, count, startingArea, startingTranslation);
+        lifeInterval = life();
+    }
 }
 
 document.getElementById('restart-btn').addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
     restart();
-})
+});
+
+document.getElementById('play-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    play();
+});
+
+document.getElementById('pause-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    pause();
+});
+
+document.getElementById('step-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    step();
+});
+
+document.getElementById('back-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    back();
+});
+
 
 let universe = init(gridSize, count, startingArea, startingTranslation);
 let lifeInterval = life();
