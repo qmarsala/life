@@ -8,10 +8,31 @@
     body {
       margin: 0;
     }
+
+    canvas {
+      display: block;
+    }
+
+    .info {
+      position: absolute;
+      padding: 20px 0 0 20px;
+    }
   </style>
 </head>
 
 <body>
+  <div class="info">
+    <p>
+      Orbit rotation left mouse drag / touch: one-finger move
+    </p>
+    <p>
+      Dolly middle mouse drag, or mousewheel / touch: two-finger pinch-in or out
+    </p>
+    <p>
+      Truck (Pan) right mouse drag / touch: two-finger move or three-finger move
+    </p>
+    <button id="restart-btn">restart</button>
+  </div>
   <script src="./main.js"></script>
 </body>
 

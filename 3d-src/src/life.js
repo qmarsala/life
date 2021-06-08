@@ -18,8 +18,8 @@ function getNeighbors(universe, i, j) {
     return neighbors;
 }
 
-function init(gridSize, count, startingArea) {
-    if (startingArea > gridSize) startingArea = gridSize;
+function init(gridSize, count, startingArea, startingTranslation) {
+    if (startingArea > gridSize - startingTranslation) startingArea = gridSize - startingTranslation;
     if (count < 3) count = 3;
 
     let universe = [];
@@ -31,7 +31,7 @@ function init(gridSize, count, startingArea) {
     }
     let i = 0;
     while (i < count) {
-        universe[getRandomInt(0, startingArea)][getRandomInt(0, startingArea)] = true;
+        universe[getRandomInt(0, startingArea) + startingTranslation][getRandomInt(0, startingArea) + startingTranslation] = true;
         i++;
     }
     return universe;
@@ -67,4 +67,4 @@ function nextGeneration(currentUniverse) {
     return nextUniverse;
 }
 
-export {init, nextGeneration};
+export {init, nextGeneration, getRandomInt};

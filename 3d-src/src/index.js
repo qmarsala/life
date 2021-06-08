@@ -1,30 +1,32 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { init, nextGeneration } from './life.js';
+import { init, nextGeneration, getRandomInt } from './life.js';
 
 
 CameraControls.install({ THREE: THREE });
 
 let gridSize = 1000;
-let count = 15000;
+let startingTranslation = gridSize * .25;
+let count = getRandomInt(100, 1500);
+let startingArea = getRandomInt(10, 53);
 let size = 1;
-let margin = .1;
-
+let margin = .4;
+let tickRate = 100;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xDDFFF7);
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.01, 1000);
-camera.position.set(70, 70, -90);
 const cameraControls = new CameraControls(camera, renderer.domElement);
+cameraControls.setLookAt(-45, 60, -45, 0, 0, 0);
 
 const material = new THREE.MeshBasicMaterial({
     color: 0xFFA69E,
-    opacity: 0.5,
+    opacity: 0.7,
     transparent: true
-    // wireframe: true
 });
 const geometry = new THREE.BoxGeometry(size, size, size);
 
@@ -52,29 +54,59 @@ function draw(universe) {
     for (let i = 0; i < universe.length; i++) {
         for (let j = 0; j < universe.length; j++) {
             const cell = universe[i][j];
-            if (!cell) continue;
+            if (!cell) {
+                continue;
+            }
 
             const cube = new THREE.Mesh(geometry, material);
-            cube.position.x = (i * (size + margin));
-            cube.position.y = (j * (size + margin));
-            cube.position.z = 0;
+            cube.position.x = (i * (size + margin)) - (startingTranslation * (size + margin));
+            cube.position.y = 0;
+            cube.position.z = (j * (size + margin)) - (startingTranslation * (size + margin));
             scene.add(cube);
         }
     }
 }
 
-let universe = init(gridSize, count, 45);
-draw(universe);
+let nextTickIn = tickRate;
+function life() {
+    return setInterval(() => {
+        let start = new Date();
 
-setInterval(() => {
-    universe = nextGeneration(universe);
-    draw(universe);
-}, 100);
+        universe = nextGeneration(universe);
+        draw(universe);
+
+        const elapsed = new Date().getTime() - start.getTime();
+        nextTickIn = tickRate - elapsed;
+        if (nextTickIn < 1) {
+            nextTickIn = 1;
+        }
+    }, nextTickIn);
+}
 
 const clock = new THREE.Clock();
-(function animate() {
+function animate() {
     const delta = clock.getDelta();
     cameraControls.update(delta);
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
-})();
+}
+
+function restart() {
+    if (lifeInterval != undefined) {
+        clearInterval(lifeInterval);
+    }
+    universe = init(gridSize, count, startingArea, startingTranslation);
+    draw(universe);
+    lifeInterval = life();
+}
+
+document.getElementById('restart-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    restart();
+})
+
+let universe = init(gridSize, count, startingArea, startingTranslation);
+let lifeInterval = life();
+draw(universe);
+animate();
