@@ -2,15 +2,14 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { init, nextGeneration, previousGeneration, getRandomInt } from './life.js';
 
-
 CameraControls.install({ THREE: THREE });
 
 let gridSize = 1000;
 let startingTranslation = gridSize * .25;
-let count = getRandomInt(100, 1500);
-let startingArea = getRandomInt(10, 53);
-let size = 1;
-let margin = .4;
+let count = getRandomInt(100, 2500);
+let startingArea = getRandomInt(10, 100);
+let size = 3;
+let margin = .8;
 let tickRate = 100;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xDDFFF7);
@@ -21,14 +20,7 @@ document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.01, 1000);
 const cameraControls = new CameraControls(camera, renderer.domElement);
-cameraControls.setLookAt(-45, 60, -45, 0, 0, 0);
-
-const material = new THREE.MeshBasicMaterial({
-    color: 0xFFA69E,
-    opacity: 0.7,
-    transparent: true
-});
-const geometry = new THREE.BoxGeometry(size, size, size);
+cameraControls.setLookAt(-35, 80, -35, 10, 0, 10);
 
 function clearThree(obj) {
     while (obj.children.length > 0) {
@@ -49,6 +41,12 @@ function clearThree(obj) {
     }
 }
 
+const geometry = new THREE.BoxGeometry(size, size, size);
+const material = new THREE.MeshBasicMaterial({
+    color: 0xFFA69E,
+    opacity: 0.7,
+    transparent: true
+});
 function draw(universe) {
     clearThree(scene);
     for (let i = 0; i < universe.length; i++) {
@@ -58,7 +56,7 @@ function draw(universe) {
                 continue;
             }
 
-            const cube = new THREE.Mesh(geometry, material);
+            let cube = new THREE.Mesh(geometry, material);
             cube.position.x = (i * (size + margin)) - (startingTranslation * (size + margin));
             cube.position.y = 0;
             cube.position.z = (j * (size + margin)) - (startingTranslation * (size + margin));
@@ -74,10 +72,18 @@ function tick() {
 
 let nextTickIn = tickRate;
 let paused = false;
-function life() {
-    universe = init(gridSize, count, startingArea, startingTranslation);
-    draw(universe);
-    return setInterval(() => {
+let stop = false;
+let currentTimeout;
+function life(shouldInit = true) {
+    if (shouldInit) {
+        universe = init(gridSize, count, startingArea, startingTranslation);
+        draw(universe);
+    }
+    const lifeTick = () => {
+        if (stop) {
+            return;
+        }
+
         let start = new Date();
 
         if (!paused) {
@@ -89,24 +95,28 @@ function life() {
         if (nextTickIn < 1) {
             nextTickIn = 1;
         }
-    }, nextTickIn);
+        currentTimeout = setTimeout(lifeTick, nextTickIn);
+    };
+    return setTimeout(lifeTick, nextTickIn);
 }
 
-const clock = new THREE.Clock();
-function animate() {
-    const delta = clock.getDelta();
-    cameraControls.update(delta);
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
+function resetTickRate(newTickRate) {
+    tickRate = 5000 - newTickRate;
+    if (currentTimeout) {
+        clearTimeout(currentTimeout);
+    }
+    nextTickIn = 1;
+    currentTimeout = life(false);
 }
 
 function restart() {
-    if (lifeInterval != undefined) {
-        clearInterval(lifeInterval);
+    if (currentTimeout != undefined) {
+        clearTimeout(currentTimeout);
     }
     cameraControls.setLookAt(-45, 60, -45, 0, 0, 0);
-    lifeInterval = life();
+    life();
     play();
+    currentTimeout = life();
 }
 
 function pause() {
@@ -128,7 +138,7 @@ function back() {
     }
 
     let prevUniverse = previousGeneration();
-    if (prevUniverse) { 
+    if (prevUniverse) {
         universe = prevUniverse;
         draw(universe);
     }
@@ -136,9 +146,9 @@ function back() {
 
 function play() {
     paused = false;
-    if (lifeInterval == undefined) {
+    if (currentTimeout == undefined) {
         universe = init(gridSize, count, startingArea, startingTranslation);
-        lifeInterval = life();
+        currentTimeout = life();
     }
 }
 
@@ -172,8 +182,21 @@ document.getElementById('back-btn').addEventListener('click', (event) => {
     back();
 });
 
+document.getElementById('speed-control').addEventListener('change', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    resetTickRate(event.target.value);
+});
+
+const clock = new THREE.Clock();
+function animate() {
+    const delta = clock.getDelta();
+    cameraControls.update(delta);
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+}
 
 let universe = init(gridSize, count, startingArea, startingTranslation);
-let lifeInterval = life();
+currentTimeout = life();
 draw(universe);
 animate();

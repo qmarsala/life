@@ -46,7 +46,7 @@ function nextGeneration(currentUniverse) {
 
     history.push(currentUniverse);
     if (history.length > 15) {
-        history = history.slice(Math.max(history.length - 15, 1))
+        history = history.slice(Math.max(history.length - 15, 1));
     }
 
     let nextUniverse = [];
