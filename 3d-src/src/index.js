@@ -95,6 +95,7 @@ function restart() {
     if (lifeInterval != undefined) {
         clearInterval(lifeInterval);
     }
+    cameraControls.setLookAt(-45, 60, -45, 0, 0, 0);
     universe = init(gridSize, count, startingArea, startingTranslation);
     draw(universe);
     lifeInterval = life();
