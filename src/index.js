@@ -106,6 +106,7 @@ function restart() {
     }
     cameraControls.setLookAt(-45, 60, -45, 0, 0, 0);
     lifeInterval = life();
+    play();
 }
 
 function pause() {
