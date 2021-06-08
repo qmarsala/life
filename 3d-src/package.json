@@ -1,0 +1,19 @@
+{
+  "name": "life3d",
+  "version": "1.0.0",
+  "description": "",
+  "main": "life3d.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "camera-controls": "^1.28.3",
+    "three": "^0.129.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2"
+  }
+}
