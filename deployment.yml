@@ -14,20 +14,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: life-app-deployment
+  name: life3d-app-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: life-app
+      app: life3d-app
   template:
     metadata:
       labels:
-        app: life-app
+        app: life3d-app
     spec:
       containers:
-        - name: life-nginx
-          image: qmarsala/life
+        - name: life3d-nginx
+          image: qmarsala/life3d
           imagePullPolicy: Always
           livenessProbe:
             httpGet:

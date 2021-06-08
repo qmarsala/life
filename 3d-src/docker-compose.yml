@@ -1,5 +1,0 @@
-services:
-    3d-client:
-        build: ./
-        ports:
-            - 3333:80

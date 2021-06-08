@@ -19,4 +19,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: qmarsala/life:latest
+          tags: qmarsala/life3d:latest
