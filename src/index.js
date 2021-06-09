@@ -7,77 +7,36 @@ const translation = gridSize * .25;
 const count = getRandomInt(100, 2500);
 const startingArea = getRandomInt(10, 100);
 let tickRate = 100;
-let nextTickIn = tickRate;
 let paused = false;
-let stop = false;
-let currentTimeout;
+let stopped = false;
 let universe = init(gridSize, count, startingArea, translation);
 let pendingOperations = [];
 
-function tick() {
-    universe = nextGeneration(universe);
-    if (pendingOperations && pendingOperations.length > 0) {
-        let op = pendingOperations.pop();
-        op(universe)
-    }
-    draw(universe, translation);
-}
-
-function life(shouldInit = true) {
-    if (shouldInit) {
-        universe = init(gridSize, count, startingArea, translation);
-        draw(universe, translation);
-    }
-    const lifeTick = () => {
-        if (stop) {
-            return;
-        }
-
-        let start = new Date();
-
-        if (!paused) {
-            tick();
-        }
-
-        const elapsed = new Date().getTime() - start.getTime();
-        nextTickIn = tickRate - elapsed;
-        if (nextTickIn < 1) {
-            nextTickIn = 1;
-        }
-        currentTimeout = setTimeout(lifeTick, nextTickIn);
-    };
-    lifeTick();
-}
-
-function resetTickRate(newTickRate) {
-    tickRate = slowestTickRate - newTickRate;
-    if (currentTimeout) {
-        clearTimeout(currentTimeout);
-    }
-    nextTickIn = 1;
-    life(false);
-}
-
-function restart() {
-    if (currentTimeout != undefined) {
-        clearTimeout(currentTimeout);
-    }
-    resetCamera();
-    life();
-    play();
+function play() {
+    stopped = false;
+    paused = false;
 }
 
 function pause() {
     paused = true;
 }
 
+function stop() {
+    stopped = true;
+}
+
+function restart() {
+    stop();
+    resetCamera();
+    universe = init(gridSize, count, startingArea, translation);
+    play();
+}
+
 function step() {
     if (!paused) {
         pause()
     }
-
-    universe = nextGeneration(universe);
-    draw(universe, translation);
+    tick();
 }
 
 function back() {
@@ -92,19 +51,9 @@ function back() {
     }
 }
 
-function play() {
-    paused = false;
-    if (currentTimeout == undefined) {
-        universe = init(gridSize, count, startingArea, translation);
-        life();
-    }
+function resetTickRate(newTickRate) {
+    tickRate = slowestTickRate - newTickRate;
 }
-
-document.getElementById('restart-btn').addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    restart();
-});
 
 document.getElementById('play-btn').addEventListener('click', (event) => {
     event.preventDefault();
@@ -116,6 +65,12 @@ document.getElementById('pause-btn').addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
     pause();
+});
+
+document.getElementById('restart-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    restart();
 });
 
 document.getElementById('step-btn').addEventListener('click', (event) => {
@@ -138,8 +93,8 @@ document.getElementById('speed-control').addEventListener('change', (event) => {
 
 document.getElementById('spawn-glider-btn').addEventListener('click', (event) => {
     pendingOperations.push((universe) => {
-        let rotateZ = getRandomInt(0,10) % 2 == 0;
-        let rotateX = getRandomInt(0,10) % 2 == 0;
+        let rotateZ = getRandomInt(0, 10) % 2 == 0;
+        let rotateX = getRandomInt(0, 10) % 2 == 0;
         let glider = [
             { x: rotateX ? -0 : 0, z: rotateZ ? -1 : 1 },
             { x: rotateX ? -1 : 1, z: rotateZ ? -0 : 0 },
@@ -147,7 +102,7 @@ document.getElementById('spawn-glider-btn').addEventListener('click', (event) =>
             { x: rotateX ? -2 : 2, z: rotateZ ? -1 : 1 },
             { x: rotateX ? -2 : 2, z: rotateZ ? -2 : 2 }
         ];
-        let startingPosistion = {x: getRandomInt(0,startingArea * 2) + translation, z: getRandomInt(0,startingArea * 2) + translation};
+        let startingPosistion = { x: getRandomInt(0, startingArea * 2) + translation, z: getRandomInt(0, startingArea * 2) + translation };
         glider.forEach(point => {
             let x = startingPosistion.x + point.x;
             let z = startingPosistion.z + point.z;
@@ -156,6 +111,25 @@ document.getElementById('spawn-glider-btn').addEventListener('click', (event) =>
     });
 });
 
-life();
-draw(universe, translation);
-animate();
+function tick() {
+    universe = nextGeneration(universe);
+    if (pendingOperations && pendingOperations.length > 0) {
+        let op = pendingOperations.pop();
+        op(universe)
+    }
+    draw(universe, translation);
+}
+
+let start = new Date();
+animate(() => {
+    if (stopped) {
+        return false;
+    }
+
+    const elapsed = new Date().getTime() - start.getTime();
+    if (elapsed >= tickRate && !paused) {
+        tick();
+        start = new Date();
+    }
+    return true;
+});

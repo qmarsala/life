@@ -31,11 +31,15 @@ const cameraControls = new CameraControls(camera, renderer.domElement);
 cameraControls.setLookAt(...cameraSettings);
 
 const clock = new THREE.Clock();
-function animate() {
+function animate(preRender) {
     const delta = clock.getDelta();
     cameraControls.update(delta);
+    let nextFrame = preRender();
     renderer.render(scene, camera);
-    requestAnimationFrame(animate);
+
+    if (nextFrame) {
+        requestAnimationFrame(() => animate(preRender));
+    }
 }
 
 function clearThree(obj) {
@@ -75,7 +79,7 @@ function draw(universe, translation) {
     }
 }
 
-function resetCamera() { 
+function resetCamera() {
     cameraControls.setLookAt(...cameraSettings);
 }
 
