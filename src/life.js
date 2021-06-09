@@ -1,5 +1,5 @@
 let history = [];
-const maxHistory = 150;
+const maxHistory = 50;
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
