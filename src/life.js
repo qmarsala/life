@@ -1,4 +1,5 @@
 let history = [];
+const maxHistory = 150;
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -45,8 +46,8 @@ function nextGeneration(currentUniverse) {
     }
 
     history.push(currentUniverse);
-    if (history.length > 15) {
-        history = history.slice(Math.max(history.length - 15, 1));
+    if (history.length > maxHistory) {
+        history = history.slice(Math.max(history.length - maxHistory));
     }
 
     let nextUniverse = [];
