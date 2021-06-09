@@ -12,9 +12,14 @@ let paused = false;
 let stop = false;
 let currentTimeout;
 let universe = init(gridSize, count, startingArea, translation);
+let pendingOperations = [];
 
 function tick() {
     universe = nextGeneration(universe);
+    if (pendingOperations && pendingOperations.length > 0) {
+        let op = pendingOperations.pop();
+        op(universe)
+    }
     draw(universe, translation);
 }
 
@@ -129,6 +134,24 @@ document.getElementById('speed-control').addEventListener('change', (event) => {
     event.preventDefault();
     event.stopPropagation();
     resetTickRate(event.target.value);
+});
+
+document.getElementById('spawn-glider-btn').addEventListener('click', (event) => {
+    pendingOperations.push((universe) => {
+        let glider = [
+            { x: 0, z: 1 },
+            { x: 1, z: 0 },
+            { x: 2, z: 0 },
+            { x: 2, z: 1 },
+            { x: 2, z: 2 }
+        ];
+        let startingPosistion = {x: getRandomInt(0,gridSize), z: getRandomInt(0,gridSize)};
+        glider.forEach(point => {
+            let x = startingPosistion.x + point.x;
+            let z = startingPosistion.z + point.z;
+            universe[x][z] = true;
+        });
+    });
 });
 
 life();
