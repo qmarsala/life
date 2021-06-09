@@ -29,12 +29,13 @@ function init(gridSize, count, startingArea, startingTranslation) {
     for (let x = 0; x < gridSize; x++) {
         universe[x] = new Array();
         for (let y = 0; y < gridSize; y++) {
-            universe[x][y] = false;
+            universe[x][y] = { isAlive: false, isUserSpawned: false };
         }
     }
     let i = 0;
     while (i < count) {
-        universe[getRandomInt(0, startingArea) + startingTranslation][getRandomInt(0, startingArea) + startingTranslation] = true;
+        universe[getRandomInt(0, startingArea) + startingTranslation][getRandomInt(0, startingArea) + startingTranslation]
+            = { isAlive: true, isUserSpawned: false };
         i++;
     }
     return universe;
@@ -55,19 +56,21 @@ function nextGeneration(currentUniverse) {
         nextUniverse[x] = new Array();
         for (let y = 0; y < currentUniverse.length; y++) {
             let neighbours = getNeighbors(currentUniverse, x, y);
-            let neighboursAlive = neighbours.filter(c => c).length;
-            let cellIsAlive = currentUniverse[x][y];
+            let neighboursAlive = neighbours.filter(c => c.isAlive).length;
+            let hasUserSpawnedNeighbours = neighbours.filter(c => c.isUserSpawned).length > 0;
+            let cellIsAlive = currentUniverse[x][y].isAlive;
+            let isUserSpawned = hasUserSpawnedNeighbours;
 
             if (cellIsAlive && neighboursAlive < 2 || neighboursAlive > 3) {
-                nextUniverse[x][y] = false;
+                nextUniverse[x][y] = { isAlive: false, isUserSpawned: false };
             }
             else if (cellIsAlive && neighboursAlive === 2 || neighboursAlive === 3) {
-                nextUniverse[x][y] = true;
+                nextUniverse[x][y] = { isAlive: true, isUserSpawned: isUserSpawned };
             }
             else if (!cellIsAlive && neighboursAlive === 3) {
-                nextUniverse[x][y] = true;
+                nextUniverse[x][y] = { isAlive: true, isUserSpawned: isUserSpawned };
             } else {
-                nextUniverse[x][y] = false;
+                nextUniverse[x][y] = { isAlive: false, isUserSpawned: false };
             }
         }
     }
@@ -76,7 +79,7 @@ function nextGeneration(currentUniverse) {
 }
 
 function previousGeneration() {
-    return history.length > 1 
+    return history.length > 1
         ? history.pop()
         : undefined;
 }

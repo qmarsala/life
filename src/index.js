@@ -138,18 +138,20 @@ document.getElementById('speed-control').addEventListener('change', (event) => {
 
 document.getElementById('spawn-glider-btn').addEventListener('click', (event) => {
     pendingOperations.push((universe) => {
+        let rotateZ = getRandomInt(0,10) % 2 == 0;
+        let rotateX = getRandomInt(0,10) % 2 == 0;
         let glider = [
-            { x: 0, z: 1 },
-            { x: 1, z: 0 },
-            { x: 2, z: 0 },
-            { x: 2, z: 1 },
-            { x: 2, z: 2 }
+            { x: rotateX ? -0 : 0, z: rotateZ ? -1 : 1 },
+            { x: rotateX ? -1 : 1, z: rotateZ ? -0 : 0 },
+            { x: rotateX ? -2 : 2, z: rotateZ ? -0 : 0 },
+            { x: rotateX ? -2 : 2, z: rotateZ ? -1 : 1 },
+            { x: rotateX ? -2 : 2, z: rotateZ ? -2 : 2 }
         ];
-        let startingPosistion = {x: getRandomInt(0,gridSize), z: getRandomInt(0,gridSize)};
+        let startingPosistion = {x: getRandomInt(0,startingArea * 2) + translation, z: getRandomInt(0,startingArea * 2) + translation};
         glider.forEach(point => {
             let x = startingPosistion.x + point.x;
             let z = startingPosistion.z + point.z;
-            universe[x][z] = true;
+            universe[x][z] = { isAlive: true, isUserSpawned: true };
         });
     });
 });

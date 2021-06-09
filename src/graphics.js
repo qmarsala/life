@@ -13,6 +13,12 @@ const material = new THREE.MeshBasicMaterial({
     transparent: true
 });
 
+const userSpawnedMaterial = new THREE.MeshBasicMaterial({
+    color: 0x7DCFB6,
+    opacity: 0.7,
+    transparent: true
+});
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xDDFFF7);
 
@@ -56,11 +62,11 @@ function draw(universe, translation) {
     for (let i = 0; i < universe.length; i++) {
         for (let j = 0; j < universe.length; j++) {
             const cell = universe[i][j];
-            if (!cell) {
+            if (!cell.isAlive) {
                 continue;
             }
 
-            let cube = new THREE.Mesh(geometry, material);
+            let cube = new THREE.Mesh(geometry, cell.isUserSpawned ? userSpawnedMaterial : material);
             cube.position.x = (i * (size + margin)) - (translation * (size + margin));
             cube.position.y = 0;
             cube.position.z = (j * (size + margin)) - (translation * (size + margin));
