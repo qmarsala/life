@@ -3,6 +3,8 @@
 
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>life 3d</title>
   <style>
     html,
@@ -23,32 +25,46 @@
       position: absolute;
       padding: 20px 0 0 20px;
     }
+
+    .collapsed {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
   <div class="info">
-    <p>
-      Orbit rotation left mouse drag / touch: one-finger move
-    </p>
-    <p>
-      Dolly middle mouse drag, or mousewheel / touch: two-finger pinch-in or out
-    </p>
-    <p>
-      Truck (Pan) right mouse drag / touch: two-finger move or three-finger move
-    </p>
-    <button id="restart-btn">restart</button>
-    <button id="play-btn">play</button>
-    <button id="pause-btn">pause</button>
-    <button id="step-btn">step</button>
-    <!-- <button id="back-btn">back</button> -->
-    <button id="spawn-glider-btn">spawn glider</button>
-    <div>
-      <label for="speed-control">speed:</label>
-      <input id="speed-control" type="range" min="1" max="5000" step="10" value="4900" style="width: 250px;">
+    <div id="info-content">
+      <p>
+        Orbit rotation left mouse drag / touch: one-finger move
+      </p>
+      <p>
+        Dolly middle mouse drag, or mousewheel / touch: two-finger pinch-in or out
+      </p>
+      <p>
+        Truck (Pan) right mouse drag / touch: two-finger move or three-finger move
+      </p>
+      <button id="restart-btn">restart</button>
+      <button id="play-btn">play</button>
+      <button id="pause-btn">pause</button>
+      <button id="step-btn">step</button>
+      <!-- <button id="back-btn">back</button> -->
+      <button id="spawn-glider-btn">spawn glider</button>
+      <div>
+        <label for="speed-control">speed:</label>
+        <input id="speed-control" type="range" min="1" max="5000" step="10" value="4900" style="width: 250px;">
+      </div>
     </div>
-
+    <button id="collapse">show / hide</button>
   </div>
+  <script>
+    let collapsed = false;
+    const infoContent = document.getElementById('info-content');
+    document.getElementById('collapse').addEventListener('click', (event) => {
+      infoContent.classList.toggle('collapsed');
+      collapsed = !collapsed;
+    });
+  </script>
   <script src="./main.js"></script>
 </body>
 
