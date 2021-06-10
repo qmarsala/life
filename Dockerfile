@@ -4,6 +4,10 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
+
+COPY tsconfig.json tsconfig.json
+COPY webpack.config.js webpack.config.js
+
 COPY ./src ./src
 COPY ./src/index.html ./dist/index.html
 
