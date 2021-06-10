@@ -36,24 +36,25 @@ export class Life {
         if (!this.paused) {
             this.pause()
         }
-        this.tick();
+        this.innerTick();
     }
 
     public resetTickRate(value: any) {
         this.settings.tickRate = value;
     }
 
+    private innerTick() {
+        this.universe.nextGeneration();
+        const currentUniverseState = this.universe.currentState;
+        const translation = this.settings.getTranslation();
+        this.graphics.draw(currentUniverseState, translation);
+    }
+
     private tick() {
-        const innerTick = () => {
-            this.universe.nextGeneration();
-            const currentUniverseState = this.universe.currentState;
-            const translation = this.settings.getTranslation();
-            this.graphics.draw(currentUniverseState, translation);
-        };
         const tickRate = this.settings.tickRate;
         const elapsed = new Date().getTime() - this.lastTickAt.getTime();
         if (elapsed >= tickRate && !this.paused) {
-            innerTick();
+            this.innerTick();
             this.lastTickAt = new Date();
         }
         return true;
