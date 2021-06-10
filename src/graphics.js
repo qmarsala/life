@@ -1,18 +1,18 @@
 import * as THREE from 'three';
+import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import CameraControls from 'camera-controls';
 
 CameraControls.install({ THREE: THREE });
 
-let cameraSettings = [-35, 120, -35, 25, 0, 25];
-let size = 3;
-let margin = .8;
-const geometry = new THREE.BoxGeometry(size, size, size);
-const material = new THREE.MeshBasicMaterial({
+const cameraSettings = [-35, 120, -35, 25, 0, 25];
+const size = 3;
+const margin = .8;
+const cubeGeometry = new THREE.BoxGeometry(size, size, size);
+const defaultMaterial = new THREE.MeshBasicMaterial({
     color: 0xFFA69E,
     opacity: 0.7,
     transparent: true
 });
-
 const userSpawnedMaterial = new THREE.MeshBasicMaterial({
     color: 0x7DCFB6,
     opacity: 0.7,
@@ -31,18 +31,16 @@ const cameraControls = new CameraControls(camera, renderer.domElement);
 cameraControls.setLookAt(...cameraSettings);
 
 const clock = new THREE.Clock();
-function animate(preRender) {
+const updateCamera = () => {
     const delta = clock.getDelta();
     cameraControls.update(delta);
-    let nextFrame = preRender();
-    renderer.render(scene, camera);
+};
 
-    if (nextFrame) {
-        requestAnimationFrame(() => animate(preRender));
-    }
-}
+const resetCamera = () => {
+    cameraControls.setLookAt(...cameraSettings);
+};
 
-function clearThree(obj) {
+const clearThree = (obj) => {
     while (obj.children.length > 0) {
         clearThree(obj.children[0])
         obj.remove(obj.children[0]);
@@ -59,10 +57,19 @@ function clearThree(obj) {
         })
         obj.material.dispose()
     }
-}
+};
 
-function draw(universe, translation) {
+const createCube = (x, z) => {
+    const geometry = cubeGeometry.clone()
+    geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(x, 0, z));
+    return geometry;
+};
+
+const draw = (universe, translation) => {
     clearThree(scene);
+    const userSpawnedGeometries = [];
+    const geometries = [];
+
     for (let i = 0; i < universe.length; i++) {
         for (let j = 0; j < universe.length; j++) {
             const cell = universe[i][j];
@@ -70,17 +77,36 @@ function draw(universe, translation) {
                 continue;
             }
 
-            let cube = new THREE.Mesh(geometry, cell.isUserSpawned ? userSpawnedMaterial : material);
-            cube.position.x = (i * (size + margin)) - (translation * (size + margin));
-            cube.position.y = 0;
-            cube.position.z = (j * (size + margin)) - (translation * (size + margin));
-            scene.add(cube);
+            const x = (i * (size + margin)) - (translation * (size + margin));
+            const z = (j * (size + margin)) - (translation * (size + margin));
+            const cube = createCube(x, z);
+            if (cell.isUserSpawned) {
+                userSpawnedGeometries.push(cube)
+                continue;
+            }
+            geometries.push(cube);
         }
     }
-}
 
-function resetCamera() {
-    cameraControls.setLookAt(...cameraSettings);
-}
+    if (userSpawnedGeometries.length > 0) {
+        const userSpawnedCubeGeometries = BufferGeometryUtils.mergeBufferGeometries(userSpawnedGeometries);
+        const userSpawnedMesh = new THREE.Mesh(userSpawnedCubeGeometries, userSpawnedMaterial);
+        scene.add(userSpawnedMesh);
+    }
+    if (geometries.length > 0) {
+        const cubeGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries);
+        const mesh = new THREE.Mesh(cubeGeometries, defaultMaterial);
+        scene.add(mesh);
+    }
+};
 
+const animate = (preRender) => {
+    updateCamera();
+    const nextFrame = preRender();
+    renderer.render(scene, camera);
+
+    if (nextFrame) {
+        requestAnimationFrame(() => animate(preRender));
+    }
+};
 export { animate, draw, resetCamera };

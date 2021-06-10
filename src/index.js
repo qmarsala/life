@@ -1,59 +1,48 @@
-import { init, nextGeneration, previousGeneration, getRandomInt } from './life.js';
+import { init, nextGeneration, getRandomInt } from './life.js';
 import { animate, draw, resetCamera } from './graphics.js';
 
 const slowestTickRate = 5000;
 const gridSize = 1000;
 const translation = gridSize * .25;
-const count = getRandomInt(100, 2500);
-const startingArea = getRandomInt(10, 100);
+let count = getRandomInt(100, 2500);
+let startingArea = getRandomInt(10, 100);
 let tickRate = 100;
 let paused = false;
 let stopped = false;
 let universe = init(gridSize, count, startingArea, translation);
 let pendingOperations = [];
 
-function play() {
+const play = () => {
     stopped = false;
     paused = false;
-}
-
-function pause() {
-    paused = true;
-}
-
-function stop() {
-    stopped = true;
-}
-
-function restart() {
+};
+const pause = () => paused = true;
+const stop = () => stopped = true;
+const restart = () => {
     stop();
     resetCamera();
+    count = getRandomInt(100, 2500);
+    startingArea = getRandomInt(10, 100);
     universe = init(gridSize, count, startingArea, translation);
     play();
-}
-
-function step() {
+};
+const step = () => {
     if (!paused) {
         pause()
     }
     tick();
-}
+};
+// const back = () => {
+//     if (!paused) {
+//         pause()
+//     }
 
-function back() {
-    if (!paused) {
-        pause()
-    }
-
-    let prevUniverse = previousGeneration();
-    if (prevUniverse) {
-        universe = prevUniverse;
-        draw(universe, translation);
-    }
-}
-
-function resetTickRate(newTickRate) {
-    tickRate = slowestTickRate - newTickRate;
-}
+//     let prevUniverse = previousGeneration();
+//     if (prevUniverse) {
+//         universe = prevUniverse;
+//     }
+// };
+const resetTickRate = (newTickRate) => tickRate = slowestTickRate - newTickRate;
 
 document.getElementById('play-btn').addEventListener('click', (event) => {
     event.preventDefault();
@@ -79,11 +68,11 @@ document.getElementById('step-btn').addEventListener('click', (event) => {
     step();
 });
 
-document.getElementById('back-btn').addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    back();
-});
+// document.getElementById('back-btn').addEventListener('click', (event) => {
+//     event.preventDefault();
+//     event.stopPropagation();
+//     back();
+// });
 
 document.getElementById('speed-control').addEventListener('change', (event) => {
     event.preventDefault();
@@ -111,17 +100,17 @@ document.getElementById('spawn-glider-btn').addEventListener('click', (event) =>
     });
 });
 
-function tick() {
+const tick = () => {
     universe = nextGeneration(universe);
     if (pendingOperations && pendingOperations.length > 0) {
         let op = pendingOperations.pop();
         op(universe)
     }
     draw(universe, translation);
-}
+};
 
 let start = new Date();
-animate(() => {
+const life = () => {
     if (stopped) {
         return false;
     }
@@ -132,4 +121,5 @@ animate(() => {
         start = new Date();
     }
     return true;
-});
+};
+animate(life);
