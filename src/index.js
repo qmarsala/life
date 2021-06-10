@@ -8,18 +8,14 @@ let count = getRandomInt(100, 2500);
 let startingArea = getRandomInt(10, 100);
 let tickRate = 100;
 let paused = false;
-let stopped = false;
 let universe = init(gridSize, count, startingArea, translation);
 let pendingOperations = [];
 
 const play = () => {
-    stopped = false;
     paused = false;
 };
 const pause = () => paused = true;
-const stop = () => stopped = true;
 const restart = () => {
-    stop();
     resetCamera();
     count = getRandomInt(100, 2500);
     startingArea = getRandomInt(10, 100);
@@ -111,10 +107,6 @@ const tick = () => {
 
 let start = new Date();
 const life = () => {
-    if (stopped) {
-        return false;
-    }
-
     const elapsed = new Date().getTime() - start.getTime();
     if (elapsed >= tickRate && !paused) {
         tick();
