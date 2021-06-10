@@ -50,7 +50,7 @@ document.getElementById('updatecolors-btn').addEventListener('click', (event) =>
 });
 
 document.getElementById('spawn-glider-btn').addEventListener('click', (event) => {
-    const startingPosistion = { x: getRandomInt(0, lifeSettings.startingArea * 2), z: getRandomInt(0, lifeSettings.startingArea * 2) };
+    const startingPosistion = { x: getRandomInt(lifeSettings.startingArea, lifeSettings.startingArea * 2), z: getRandomInt(lifeSettings.startingArea, lifeSettings.startingArea * 2) };
     const rotateZ = getRandomInt(0, 10) % 2 == 0;
     const rotateX = getRandomInt(0, 10) % 2 == 0;
     const rotatedGlider = glider.map(point => {
