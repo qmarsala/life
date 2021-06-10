@@ -1,5 +1,5 @@
 import { init, nextGeneration, getRandomInt } from './life.js';
-import { animate, draw, resetCamera } from './graphics.js';
+import { animate, draw, resetCamera, updateColorSettings } from './graphics.js';
 
 const slowestTickRate = 5000;
 const gridSize = 1000;
@@ -74,6 +74,19 @@ document.getElementById('speed-control').addEventListener('change', (event) => {
     event.preventDefault();
     event.stopPropagation();
     resetTickRate(event.target.value);
+});
+
+document.getElementById('updatecolors-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const newBgColor = document.getElementById('bgcolor-input').value;
+    const newColor1 = document.getElementById('color1-input').value;
+    const newColor2 = document.getElementById('color2-input').value;
+    updateColorSettings({
+        bgColor: newBgColor,
+        color1: newColor1,
+        color2: newColor2
+    });
 });
 
 document.getElementById('spawn-glider-btn').addEventListener('click', (event) => {

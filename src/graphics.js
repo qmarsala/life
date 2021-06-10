@@ -8,19 +8,32 @@ const cameraSettings = [-35, 120, -35, 25, 0, 25];
 const size = 3;
 const margin = .8;
 const cubeGeometry = new THREE.BoxGeometry(size, size, size);
-const defaultMaterial = new THREE.MeshBasicMaterial({
-    color: 0xFFA69E,
-    opacity: 0.7,
-    transparent: true
-});
-const userSpawnedMaterial = new THREE.MeshBasicMaterial({
-    color: 0x7DCFB6,
+let colorSettings = {
+    color1: "FFA69E",
+    color2: "7DCFB6",
+    bgColor: "DDFFF7"
+}
+
+const createMesh = (color) => new THREE.MeshBasicMaterial({
+    color: new THREE.Color(`#${color}`),
     opacity: 0.7,
     transparent: true
 });
 
+const updateColorSettings = (newColorSettings) => {
+    colorSettings = newColorSettings;
+    defaultMaterial = createMesh(colorSettings.color1);
+    userSpawnedMaterial = createMesh(colorSettings.color2);
+    scene.background = new THREE.Color(`#${colorSettings.bgColor}`);
+};
+
+let defaultMaterial = createMesh(colorSettings.color1);
+let userSpawnedMaterial = createMesh(colorSettings.color2);
+
+
+
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xDDFFF7);
+scene.background = new THREE.Color(`#${colorSettings.bgColor}`);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -109,4 +122,4 @@ const animate = (preRender) => {
         requestAnimationFrame(() => animate(preRender));
     }
 };
-export { animate, draw, resetCamera };
+export { animate, draw, resetCamera, updateColorSettings };
